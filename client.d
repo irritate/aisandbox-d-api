@@ -9,6 +9,8 @@
 module aisandbox.client;
 
 import aisandbox.json;
+import aisandbox.networker;
+import std.concurrency;
 import std.conv;
 import std.json;
 import std.socket;
@@ -38,41 +40,20 @@ int main(string[] args)
         writeln("    client <host> <port> <commander>");
         return 1;
     }
-
-    writefln("Connecting to %s on port %s...", host, port);
-    Address[] addrs = getAddress(host, port);
-    Address addrToUse;
-    foreach (addr; addrs)
-    {
-        debug writeln(addr);
-        if (addr.addressFamily == AddressFamily.INET)
-        {
-            addrToUse = addr;
-            break;
-        }
-    }
-    Socket sock = new Socket(addrToUse.addressFamily, SocketType.STREAM);
-    //sock.blocking = true;
-    sock.connect(addrToUse);
-    ubyte[1024] buf;
+    Tid worker = start_worker(host, port);
     while (true)
     {
-        int size = sock.receive(buf);
-        string bufStr = cast(string)buf[0..size];
-        debug writefln("size: %d, buf: %s", size, bufStr);
-        string[] lines = splitLines(bufStr);
-        debug foreach (i, line; lines)
+        string result = receiveOnly!(string)();
+        writefln("[client] result: %s\n", result);
+        if (result == "<connect>")
         {
-            writefln("%d: %s", i, line);
-        }
-        if (lines[0] == "<connect>")
-        {
+            result = receiveOnly!(string)();
             writeln("Connected!  Handshaking...");
-            ConnectServer cs = fromJSON!(ConnectServer)(lines[1]);
+            ConnectServer cs = fromJSON!(ConnectServer)(result);
             ConnectClient cc = new ConnectClient(commander, "D");
             string reply = format("<connect>\n%s\n", toJSON(cc));
             debug writeln(reply);
-            sock.send(reply);
+            send(worker, reply);
         }
     }
 
