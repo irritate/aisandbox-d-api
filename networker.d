@@ -74,7 +74,7 @@ void loop(Tid parent, Socket sock, ubyte[] buf)
             );
     if (received)
     {
-        writeln("[networker] result: %s", result);
+        writefln("[networker] result: %s", result);
         sock.send(result);
     }
 
