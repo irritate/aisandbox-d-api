@@ -56,6 +56,31 @@ int main(string[] args)
             debug(message_passing) writefln("[client -> networker] reply: %s", reply);
             send(worker, reply);
         }
+        else if (result == "<initialize>")
+        {
+            result = receiveOnly!(string)();
+            writeln("Initializing...");
+            debug(message_passing) writefln("[networker -> client] result:", result);
+            //LevelInfo levelInfo = fromJSON!(LevelInfo)(result);
+            result = receiveOnly!(string)();
+            //GameInfo gameInfo = fromJSON!(GameInfo)(result);
+        }
+        else if (result == "<tick>")
+        {
+            result = receiveOnly!(string)();
+            debug(verbose) writeln("Tick...");
+            debug(message_passing) writefln("[networker -> client] result:", result);
+            //GameInfo gameInfo = fromJSON!(GameInfo)(result);
+        }
+        else if (result == "<shutdown>")
+        {
+            assert(false);
+        }
+        else
+        {
+            writeln(result);
+            return 0;
+        }
     }
 
     return 0;
