@@ -26,7 +26,7 @@ void start_worker_impl(Tid parent, string host, ushort port)
     foreach (addr; addrs)
     {
         // Fixes a problem where the same host has INET and INET6 addresses.
-        debug writeln(addr);
+        debug(verbose) writeln(addr);
         if (addr.addressFamily == AddressFamily.INET)
         {
             addrToUse = addr;
@@ -57,12 +57,12 @@ void loop(Tid parent, Socket sock, ubyte[] buf)
     int size = sock.receive(tempBuf);
     assert(size != 0);
     buf ~= tempBuf[0..size];
-    debug writefln("size: %d, buf: %s", size, cast(string)tempBuf[0..size]);
+    debug(verbose) writefln("size: %d, buf: %s", size, cast(string)tempBuf[0..size]);
     int pos = indexOf(cast(char[])buf, '\n');
     while (pos != -1)
     {
         string line = cast(string)buf[0..pos];
-        debug writefln("line: %s", line);
+        debug(message_passing) writefln("[networker -> client] line: %s", line);
         send(parent, line);
         buf = buf[pos+1..$];
         pos = indexOf(cast(char[])buf, '\n');
@@ -74,7 +74,7 @@ void loop(Tid parent, Socket sock, ubyte[] buf)
             );
     if (received)
     {
-        writefln("[networker] result: %s", result);
+        debug(message_passing) writefln("[client -> networker] result: %s", result);    
         sock.send(result);
     }
 

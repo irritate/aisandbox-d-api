@@ -22,7 +22,7 @@ T fromJSON(T)(string json)
     JSONValue value = parseJSON(json);
     enforce(value.type != JSON_TYPE.NULL);
     string className = "aisandbox.json."~value.object["__class__"].str;
-    debug writefln("className: %s", className);
+    debug(verbose) writefln("className: %s", className);
     enforce(typeid(T).name == className);
     T obj = cast(T)Object.factory(className);
     static if (__traits(compiles, obj.setFromJSONValue(value)))
@@ -48,9 +48,9 @@ class ConnectServer
     // private to module
     private void setFromJSONValue(JSONValue value)
     {
-        debug writefln("setFromJSONValue: %s", value);
+        debug(verbose) writefln("setFromJSONValue: %s", value);
         protocolVersion = value.object["protocolVersion"].str;
-        debug writefln("protocolVersion: %s", protocolVersion);
+        debug(verbose) writefln("protocolVersion: %s", protocolVersion);
         validate();
     }
     void validate()

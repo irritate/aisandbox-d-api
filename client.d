@@ -44,15 +44,16 @@ int main(string[] args)
     while (true)
     {
         string result = receiveOnly!(string)();
-        writefln("[client] result: %s\n", result);
+        debug(message_passing) writefln("[networker -> client] result: %s\n", result);
         if (result == "<connect>")
         {
             result = receiveOnly!(string)();
+            debug(message_passing) writefln("[networker -> client] result: %s", result);
             writeln("Connected!  Handshaking...");
             ConnectServer cs = fromJSON!(ConnectServer)(result);
             ConnectClient cc = new ConnectClient(commander, "D");
             string reply = format("<connect>\n%s\n", toJSON(cc));
-            debug writeln(reply);
+            debug(message_passing) writefln("[client -> networker] reply: %s", reply);
             send(worker, reply);
         }
     }
