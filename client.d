@@ -61,7 +61,7 @@ int main(string[] args)
             result = receiveOnly!(string)();
             writeln("Initializing...");
             debug(message_passing) writefln("[networker -> client] result:", result);
-            //LevelInfo levelInfo = fromJSON!(LevelInfo)(result);
+            LevelInfo levelInfo = fromJSON!(LevelInfo)(result);
             result = receiveOnly!(string)();
             //GameInfo gameInfo = fromJSON!(GameInfo)(result);
         }
