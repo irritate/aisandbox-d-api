@@ -72,7 +72,7 @@ unittest
     }
     try
     {
-        class Dummy {};
+        class Dummy {}
         Dummy obj = fromJSON!(Dummy)("");
         assert(false);
     }
