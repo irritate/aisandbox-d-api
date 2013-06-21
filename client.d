@@ -41,7 +41,8 @@ int main(string[] args)
         return 1;
     }
     Tid worker = start_worker(host, port);
-    while (true)
+    bool done = false;
+    while (!done)
     {
         string result = receiveOnly!(string)();
         debug(message_passing) writefln("[networker -> client] result: %s\n", result);
